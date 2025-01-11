@@ -2,22 +2,52 @@ import { useContext } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../../Provider/AuthProvider";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import SocialLogin from "../../components/SocialLogin/SocialLogin";
 
 
 
 const SignUp = () => {
+    const axiosPublic=useAxiosPublic();
     const { register, handleSubmit, reset, formState: { errors }, } = useForm();
+    const {createUser,updateUserProfile}=useContext(AuthContext);
+    const navigate=useNavigate();
 
-    const {createUser}=useContext(AuthContext)
-    const onSubmit = (data) => {
-        console.log(data)
-        createUser(data.email,data.password)
-        .then(result=>{
-            const loggedUser=result.user;
-            console.log(loggedUser);
-            reset();
-        })
-    }
+  const onSubmit = data => {
+        // console.log(data);
+        createUser(data.email, data.password)
+            .then(result => {
+                const loggedUser = result.user;
+                console.log(loggedUser);
+                updateUserProfile(data.name, data.photoURL)
+                    .then(() => {
+                        // console.log('user profile info updated')
+                        // create use info to save database
+                        const userInfo={
+                            name:data.name,
+                            email:data.email
+                        }
+                        axiosPublic.post('/users', userInfo)
+                        .then(res =>{
+                            if(res.data.insertedId){
+                                console.log('user Added to the database')
+                                reset();
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'User created successfully.',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                                navigate('/');  
+                            }
+                        })
+                    })
+                    .catch(error => console.log(error))
+            })
+    };
     return (
         <>
         <Helmet>
@@ -85,7 +115,10 @@ const SignUp = () => {
                             <div className="form-control mt-6">
                                 <input className="btn btn-primary" type="submit" value="Sign Up" />
                             </div>
+                            <div className="divider">OR</div>
+                            <SocialLogin></SocialLogin>
                         </form>
+                        
                     </div>
                 </div>
             </div>

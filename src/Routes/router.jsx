@@ -8,7 +8,11 @@ import Menu from "../pages/Menu/Menu/Menu";
 import Order from "../pages/Order/Order/Order";
 import Login from "../pages/Login/Login";
 import SignUp from "../pages/SignUp/SignUp";
+import Dashboard from "../Layout/Dashboard";
+import Cart from "../pages/Dashboard/Cart/Cart";
 import PrivateRoute from "./PrivateRoute";
+import AllUsers from "../pages/Dashboard/AllUsers/AllUsers";
+
 
 
 
@@ -23,9 +27,7 @@ import PrivateRoute from "./PrivateRoute";
             element:<Home></Home>
         },{
           path:'menu',
-          element:<PrivateRoute>
-            <Menu></Menu>
-          </PrivateRoute>
+          element: <Menu></Menu>
         },{
           path:"order/:category",
           element: <Order></Order>
@@ -37,7 +39,21 @@ import PrivateRoute from "./PrivateRoute";
           element:<SignUp></SignUp>
         }
       ]
-    },
+    },{
+      path:'dashboard',
+      element:<PrivateRoute><Dashboard></Dashboard></PrivateRoute>,
+      children:[
+        {
+          path:'cart',
+          element:<Cart></Cart>
+        },
+        // Admin route
+        {
+          path:'users',
+          element:<AllUsers></AllUsers>
+        }
+      ]
+    }
   ]);
 
 export default router;
