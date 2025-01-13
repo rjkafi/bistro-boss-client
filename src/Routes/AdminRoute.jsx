@@ -4,10 +4,10 @@ import useAdmin from "../hooks/useAdmin";
 import { Navigate } from "react-router-dom";
 
 
-const AdminRoute = () => {
+const AdminRoute = ({children}) => {
     const {user, loading}=useContext(AuthContext);
     const [isAdmin, isAdminLoading]=useAdmin();
-    
+
     if(loading || isAdminLoading){
         return <div>
             <span className="loading loading-bars loading-md"></span>
@@ -18,7 +18,7 @@ const AdminRoute = () => {
     if(user && isAdmin){
         return children;
     }
-    return <Navigate to='/login' state={{form:location}} replace></Navigate>
+    return <Navigate to='/' state={{form:location.pathname}} replace></Navigate>
 };
 
 
